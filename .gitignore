@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+.playwright/
+*.local
+.env
+.env.local
+.env.*.local

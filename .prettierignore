@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.claude/
+p-xing-js-coding-agent-instructions.md
