@@ -16,14 +16,19 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "check:terms": "node scripts/check-forbidden-terms.mjs",
-    "ci": "npm run check:terms && npm run format:check && npm run lint && npm run typecheck && npm run coverage && npm run build && npm run e2e"
+    "check:privacy": "node scripts/check-privacy.mjs",
+    "validate:html": "html-validate dist/index.html",
+    "lhci": "lhci autorun",
+    "ci": "npm run check:terms && npm run format:check && npm run lint && npm run typecheck && npm run coverage && npm run build && npm run validate:html && npm run check:privacy && npm run e2e && npm run lhci"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.50.0",
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^3.0.0",
     "eslint": "^9.0.0",
     "happy-dom": "^17.0.0",
+    "html-validate": "^11.3.0",
     "prettier": "^3.4.0",
     "typescript": "^5.7.0",
     "typescript-eslint": "^8.0.0",

@@ -3,6 +3,7 @@ dist/
 coverage/
 playwright-report/
 .playwright/
+.lighthouseci/
 *.local
 .env
 .env.local
