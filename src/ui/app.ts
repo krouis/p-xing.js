@@ -11,6 +11,7 @@ import { getDailyPuzzle } from "../core/daily";
 import {
   applyTheme,
   getThemePreference,
+  resolveTheme,
   setThemePreference,
 } from "../core/theme";
 import { puzzles } from "../data/puzzles";
@@ -18,6 +19,9 @@ import { renderBoard, syncBoard, flashMistake } from "./board";
 import { initHelp } from "./help";
 import { showResult } from "./result";
 import { initToolbar } from "./toolbar";
+import { attachPointer } from "../input/pointer";
+import { attachLongPress } from "../input/long-press";
+import { attachKeyboard } from "../input/keyboard";
 
 let state: GameState;
 let puzzle: Puzzle;
@@ -33,8 +37,7 @@ function fmtTime(ms: number): string {
 
 function tickTimer(): void {
   if (state.startedAt === null) return;
-  const elapsed = Date.now() - state.startedAt;
-  timerEl.textContent = fmtTime(elapsed);
+  timerEl.textContent = fmtTime(Date.now() - state.startedAt);
 }
 
 function stopTimer(): void {
@@ -106,8 +109,8 @@ function handleUndo(): void {
 }
 
 function handleThemeToggle(): void {
-  const current: ThemePreference = getThemePreference();
-  const next: ThemePreference = current === "dark" ? "light" : "dark";
+  const resolved = resolveTheme(getThemePreference());
+  const next: ThemePreference = resolved === "dark" ? "light" : "dark";
   setThemePreference(next);
 }
 
@@ -115,10 +118,8 @@ export function initApp(): void {
   const app = document.querySelector<HTMLDivElement>("#app");
   if (!app) return;
 
-  // Apply saved or system theme immediately
   applyTheme(getThemePreference());
 
-  // Select puzzle
   const p = getDailyPuzzle(puzzles) ?? puzzles[0];
   if (!p) {
     app.textContent = "No puzzles available.";
@@ -127,7 +128,6 @@ export function initApp(): void {
   puzzle = p;
   state = createGameState(puzzle);
 
-  // Build page structure
   app.innerHTML = `
     <header class="app-header">
       <span class="app-title">p-xing.js</span>
@@ -162,44 +162,30 @@ export function initApp(): void {
   const helpBtn = app.querySelector<HTMLButtonElement>("[data-action='help']")!;
   const toolbar = app.querySelector<HTMLElement>(".toolbar")!;
 
-  renderBoard(boardEl, puzzle, { onFill: handleFill, onCross: handleCross });
+  renderBoard(boardEl, puzzle);
+
+  attachPointer(boardEl, { onFill: handleFill, onCross: handleCross });
+
+  attachLongPress(boardEl, {
+    thresholdMs: 500,
+    moveTolerancePx: 10,
+    onTap: handleFill,
+    onLongPress: handleCross,
+  });
+
+  attachKeyboard({
+    onUndo: handleUndo,
+    onRestart: restartGame,
+    onHelpToggle: () => {
+      if (helpDialog.open) helpDialog.close();
+      else helpDialog.showModal();
+    },
+  });
+
   initHelp(helpBtn, helpDialog);
   initToolbar(toolbar, {
     onUndo: handleUndo,
     onRestart: restartGame,
     onThemeToggle: handleThemeToggle,
-  });
-
-  // Keyboard shortcuts
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
-    const target = e.target;
-    if (
-      target instanceof HTMLInputElement ||
-      target instanceof HTMLTextAreaElement
-    ) {
-      return;
-    }
-
-    if ((e.ctrlKey || e.metaKey) && e.key === "z") {
-      e.preventDefault();
-      handleUndo();
-      return;
-    }
-
-    switch (e.key.toLowerCase()) {
-      case "u":
-        handleUndo();
-        break;
-      case "r":
-        restartGame();
-        break;
-      case "?":
-        if (helpDialog.open) {
-          helpDialog.close();
-        } else {
-          helpDialog.showModal();
-        }
-        break;
-    }
   });
 }

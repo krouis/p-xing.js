@@ -6,8 +6,7 @@ export default defineConfig({
     include: ["tests/unit/**/*.test.ts"],
     coverage: {
       provider: "v8",
-      // Phase 2: enforce gates on core engine; expand to ui/input in Phases 3–4
-      include: ["src/core/**/*.ts"],
+      include: ["src/core/**/*.ts", "src/input/**/*.ts"],
       thresholds: {
         statements: 90,
         branches: 85,

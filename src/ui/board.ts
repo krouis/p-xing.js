@@ -1,11 +1,6 @@
 import type { Puzzle, PlayerPixel } from "../core/puzzle";
 import { getRowClues, getColumnClues } from "../core/clues";
 
-export interface BoardCallbacks {
-  onFill: (x: number, y: number) => void;
-  onCross: (x: number, y: number) => void;
-}
-
 function cellAt(
   container: HTMLElement,
   x: number,
@@ -16,11 +11,7 @@ function cellAt(
   );
 }
 
-export function renderBoard(
-  container: HTMLElement,
-  puzzle: Puzzle,
-  callbacks: BoardCallbacks,
-): void {
+export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
   const rowClues = getRowClues(puzzle);
   const colClues = getColumnClues(puzzle);
 
@@ -86,61 +77,6 @@ export function renderBoard(
     }
   }
   board.appendChild(cellsEl);
-
-  // Drag tracking
-  let dragActive = false;
-  let dragAction: "fill" | "cross" | null = null;
-  let lastDragKey: string | null = null;
-
-  function posFromEvent(e: MouseEvent): { x: number; y: number } | null {
-    const el = (e.target as Element).closest<HTMLElement>(".cell");
-    if (!el) return null;
-    const x = Number(el.dataset["x"]);
-    const y = Number(el.dataset["y"]);
-    if (Number.isNaN(x) || Number.isNaN(y)) return null;
-    return { x, y };
-  }
-
-  cellsEl.addEventListener("mousedown", (e: MouseEvent) => {
-    const pos = posFromEvent(e);
-    if (!pos) return;
-    e.preventDefault();
-    if (e.button === 2) {
-      dragAction = "cross";
-      callbacks.onCross(pos.x, pos.y);
-    } else if (e.button === 0) {
-      dragAction = "fill";
-      callbacks.onFill(pos.x, pos.y);
-    } else {
-      return;
-    }
-    dragActive = true;
-    lastDragKey = `${pos.x},${pos.y}`;
-  });
-
-  cellsEl.addEventListener("mousemove", (e: MouseEvent) => {
-    if (!dragActive || !dragAction) return;
-    const pos = posFromEvent(e);
-    if (!pos) return;
-    const key = `${pos.x},${pos.y}`;
-    if (key === lastDragKey) return;
-    lastDragKey = key;
-    if (dragAction === "fill") {
-      callbacks.onFill(pos.x, pos.y);
-    } else {
-      callbacks.onCross(pos.x, pos.y);
-    }
-  });
-
-  cellsEl.addEventListener("contextmenu", (e: MouseEvent) => {
-    e.preventDefault();
-  });
-
-  document.addEventListener("mouseup", () => {
-    dragActive = false;
-    dragAction = null;
-    lastDragKey = null;
-  });
 
   container.innerHTML = "";
   container.appendChild(board);
