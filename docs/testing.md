@@ -1,7 +1,5 @@
 # Testing
 
-_Full documentation written in Phase 5._
-
 ## Unit tests (Vitest)
 
 ```bash
@@ -15,6 +13,7 @@ Tests live in `tests/unit/`. Each `src/core/` module has a corresponding test fi
 ## E2E tests (Playwright)
 
 ```bash
+npx playwright install # one-time browser install
 npm run e2e
 ```
 
@@ -38,3 +37,13 @@ npm run check:terms
 ```
 
 Fails if the forbidden product term appears in tracked source files.
+
+## Full Local Gate
+
+```bash
+npm run ci
+```
+
+This runs terminology, formatting, lint, typecheck, coverage, production build,
+HTML validation, privacy checks, E2E tests, and Lighthouse CI in the same order
+as the package script.

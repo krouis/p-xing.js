@@ -31,6 +31,19 @@ describe("loadScores", () => {
     localStorage.setItem("p-xing.scores.v1", JSON.stringify({ bad: true }));
     expect(loadScores()).toEqual([]);
   });
+
+  it("filters malformed score entries", () => {
+    localStorage.setItem(
+      "p-xing.scores.v1",
+      JSON.stringify([
+        SAMPLE_SCORE,
+        { ...SAMPLE_SCORE, initials: "<x>" },
+        { ...SAMPLE_SCORE, score: Number.NaN },
+        { ...SAMPLE_SCORE, completedAt: "not-a-date" },
+      ]),
+    );
+    expect(loadScores()).toEqual([SAMPLE_SCORE]);
+  });
 });
 
 describe("saveScore", () => {

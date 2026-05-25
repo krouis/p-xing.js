@@ -1,7 +1,5 @@
 # Release
 
-_Full documentation written in Phase 5._
-
 ## GitHub Pages deployment
 
 Push to `main`. The `pages.yml` workflow runs automatically:
@@ -20,7 +18,20 @@ Open `https://<owner>.github.io/p-xing.js/` and confirm:
 - First click starts the timer
 - Light/dark theme toggle works
 - Help panel opens and closes
+- Mobile tap fills a pixel
+- Mobile long press crosses a pixel
+- Result dialog saves a local score with 3-character initials
+- Browser devtools show no third-party requests on load
 
 ## Versioning
 
 Use `package.json` `version` field. Tag releases as `vX.Y.Z`.
+
+## Pre-Release Checklist
+
+Before tagging:
+
+- run `npm run ci`
+- confirm `README.md` points at the correct live demo URL
+- confirm `vite.config.ts` still uses `/p-xing.js/` for GitHub Pages
+- confirm the Pages workflow is enabled in repository settings

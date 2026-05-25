@@ -8,6 +8,7 @@
 
 :root {
   --cell-size: 36px;
+  --clue-space: 4.5rem;
   --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
 
   --color-bg: #f8f9fa;
@@ -88,7 +89,7 @@ body {
 .app-title {
   font-size: 1.125rem;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
   font-family: var(--font-mono);
   flex-shrink: 0;
 }
@@ -102,6 +103,10 @@ body {
   padding: 1.25rem 1rem;
   gap: 1rem;
   overflow: auto;
+}
+
+.app-main--centered {
+  justify-content: center;
 }
 
 /* ── Toolbar ───────────────────────────────────────────────────── */
@@ -191,6 +196,16 @@ button:disabled {
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  max-width: 100%;
+}
+
+.board--medium {
+  --cell-size: 30px;
+}
+
+.board--large {
+  --cell-size: 24px;
+  --clue-space: 3.75rem;
 }
 
 .board-corner {
@@ -208,6 +223,7 @@ button:disabled {
   display: grid;
   align-items: stretch;
   justify-items: end;
+  max-width: var(--clue-space);
 }
 
 .board-cells {
@@ -232,6 +248,7 @@ button:disabled {
   font-family: var(--font-mono);
   color: var(--color-fg);
   min-height: 1.5rem;
+  overflow: hidden;
 }
 
 .row-clue {
@@ -247,6 +264,8 @@ button:disabled {
   font-family: var(--font-mono);
   color: var(--color-fg);
   min-width: 1.5rem;
+  max-width: var(--clue-space);
+  overflow: hidden;
 }
 
 /* Cells */
@@ -262,6 +281,10 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background-color 0.12s ease,
+    opacity 0.12s ease,
+    transform 0.08s ease;
 }
 
 .cell:hover {
@@ -287,6 +310,7 @@ button:disabled {
 /* Filled */
 .cell[data-state="filled"] {
   background-color: var(--color-filled);
+  transform: scale(0.98);
 }
 
 .cell[data-state="filled"]:hover {
@@ -460,7 +484,7 @@ dialog::backdrop {
   font-weight: 800;
   font-family: var(--font-mono);
   color: var(--color-accent);
-  letter-spacing: -1px;
+  letter-spacing: 0;
 }
 
 .result-score-label {
@@ -609,15 +633,48 @@ dialog::backdrop {
   padding: 0.75rem 0;
 }
 
+/* Empty state */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  max-width: 24rem;
+  padding: 1.5rem;
+}
+
+.empty-state-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.empty-state h1 {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.empty-state p:last-child {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
 /* ── Responsive ────────────────────────────────────────────────── */
 
 @media (max-width: 480px) {
   :root {
     --cell-size: 28px;
+    --clue-space: 3.25rem;
   }
 
   .app-header {
     padding: 0.375rem 0.75rem;
+    align-items: flex-start;
   }
 
   .app-title {
@@ -626,6 +683,9 @@ dialog::backdrop {
 
   .toolbar-timer {
     font-size: 0.85rem;
+    order: -1;
+    width: 100%;
+    text-align: right;
   }
 
   button {
@@ -638,8 +698,34 @@ dialog::backdrop {
     font-size: 0.6rem;
   }
 
+  .board--medium {
+    --cell-size: 24px;
+  }
+
+  .board--large {
+    --cell-size: 18px;
+    --clue-space: 2.75rem;
+  }
+
+  .board--large .col-clue,
+  .board--large .row-clue {
+    font-size: 0.52rem;
+    gap: 1px;
+  }
+
   .result-stats {
     gap: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }
 

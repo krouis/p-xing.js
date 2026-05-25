@@ -12,7 +12,7 @@ A minimalist browser-based pixel crossing puzzle game. Open the page, start play
 
 _Coming soon — deployed at `https://<owner>.github.io/p-xing.js/`_
 
-<!-- Screenshot placeholder -->
+![p-xing.js puzzle board screenshot](docs/assets/p-xing-screenshot.svg)
 
 ---
 
@@ -66,6 +66,12 @@ npm run coverage   # unit tests + coverage report
 npm run e2e        # Playwright E2E tests
 ```
 
+Playwright needs local browser binaries before the full E2E matrix can run:
+
+```bash
+npx playwright install
+```
+
 ## Build
 
 ```bash
@@ -79,7 +85,7 @@ npm run preview    # preview production build locally
 npm run ci
 ```
 
-Runs: forbidden-term check → format check → lint → typecheck → coverage → build → e2e.
+Runs: forbidden-term check → format check → lint → typecheck → coverage → build → HTML validation → privacy check → E2E → Lighthouse CI.
 
 ## GitHub Pages deployment
 

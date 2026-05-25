@@ -11,12 +11,30 @@ function cellAt(
   );
 }
 
+function stateLabel(pixel: PlayerPixel): string {
+  switch (pixel) {
+    case "filled":
+      return "filled";
+    case "crossed":
+      return "crossed";
+    case "unknown":
+      return "unknown";
+  }
+}
+
 export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
   const rowClues = getRowClues(puzzle);
   const colClues = getColumnClues(puzzle);
 
   const board = document.createElement("div");
   board.className = "board";
+  if (puzzle.width >= 15) {
+    board.classList.add("board--large");
+  } else if (puzzle.width >= 10) {
+    board.classList.add("board--medium");
+  }
+  board.style.setProperty("--puzzle-width", String(puzzle.width));
+  board.style.setProperty("--puzzle-height", String(puzzle.height));
 
   // Corner (top-left spacer)
   const corner = document.createElement("div");
@@ -31,6 +49,7 @@ export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
     const div = document.createElement("div");
     div.className = "col-clue";
     div.dataset["index"] = String(x);
+    div.setAttribute("aria-label", `Column ${x + 1} clues ${clue.join(" ")}`);
     clue.forEach((n) => {
       const span = document.createElement("span");
       span.textContent = String(n);
@@ -48,6 +67,7 @@ export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
     const div = document.createElement("div");
     div.className = "row-clue";
     div.dataset["index"] = String(y);
+    div.setAttribute("aria-label", `Row ${y + 1} clues ${clue.join(" ")}`);
     clue.forEach((n) => {
       const span = document.createElement("span");
       span.textContent = String(n);
@@ -72,7 +92,7 @@ export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
       cell.dataset["y"] = String(y);
       cell.dataset["state"] = "unknown";
       cell.setAttribute("role", "gridcell");
-      cell.setAttribute("aria-label", `Row ${y + 1} column ${x + 1}`);
+      cell.setAttribute("aria-label", `Row ${y + 1} column ${x + 1}, unknown`);
       cellsEl.appendChild(cell);
     }
   }
@@ -90,7 +110,12 @@ export function syncBoard(
     const x = Number(cell.dataset["x"]);
     const y = Number(cell.dataset["y"]);
     if (Number.isNaN(x) || Number.isNaN(y)) return;
-    cell.dataset["state"] = pixels[y]?.[x] ?? "unknown";
+    const pixel = pixels[y]?.[x] ?? "unknown";
+    cell.dataset["state"] = pixel;
+    cell.setAttribute(
+      "aria-label",
+      `Row ${y + 1} column ${x + 1}, ${stateLabel(pixel)}`,
+    );
   });
 }
 

@@ -14,6 +14,7 @@ import {
   resolveTheme,
   setThemePreference,
 } from "../core/theme";
+import { getValidPuzzles } from "../core/validation";
 import { puzzles } from "../data/puzzles";
 import { renderBoard, syncBoard, flashMistake } from "./board";
 import { initHelp } from "./help";
@@ -63,6 +64,18 @@ function restartGame(): void {
   state = createGameState(puzzle);
   syncBoard(boardEl, state.pixels);
   resetTimer();
+}
+
+function renderEmptyState(app: HTMLDivElement): void {
+  app.innerHTML = `
+    <main class="app-main app-main--centered">
+      <section class="empty-state" role="status" aria-live="polite">
+        <p class="empty-state-kicker">p-xing.js</p>
+        <h1>No playable puzzles</h1>
+        <p>Check the puzzle data and reload the page.</p>
+      </section>
+    </main>
+  `;
 }
 
 function handleFill(x: number, y: number): void {
@@ -120,9 +133,10 @@ export function initApp(): void {
 
   applyTheme(getThemePreference());
 
-  const p = getDailyPuzzle(puzzles) ?? puzzles[0];
+  const validPuzzles = getValidPuzzles(puzzles);
+  const p = getDailyPuzzle(validPuzzles) ?? validPuzzles[0];
   if (!p) {
-    app.textContent = "No puzzles available.";
+    renderEmptyState(app);
     return;
   }
   puzzle = p;
