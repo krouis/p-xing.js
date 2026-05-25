@@ -240,7 +240,7 @@ button:disabled {
   align-items: center;
   justify-content: flex-end;
   padding-right: 6px;
-  gap: 3px;
+  gap: 5px;
   height: var(--cell-size);
   font-size: 0.7rem;
   font-weight: 600;
