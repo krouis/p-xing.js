@@ -23,6 +23,7 @@ export function attachLongPress(
   let startX = 0;
   let startY = 0;
   let activeCell: { x: number; y: number } | null = null;
+  let pressEl: HTMLElement | null = null;
   let longPressFired = false;
 
   function cancel() {
@@ -30,6 +31,8 @@ export function attachLongPress(
       clearTimeout(timerId);
       timerId = null;
     }
+    pressEl?.classList.remove("pressing");
+    pressEl = null;
     activeCell = null;
     longPressFired = false;
   }
@@ -42,6 +45,8 @@ export function attachLongPress(
     startX = e.clientX;
     startY = e.clientY;
     activeCell = cell;
+    pressEl = (e.target as Element).closest<HTMLElement>(".cell");
+    pressEl?.classList.add("pressing");
     longPressFired = false;
     timerId = setTimeout(() => {
       if (!activeCell) return;

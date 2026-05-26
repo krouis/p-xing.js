@@ -23,6 +23,7 @@ import { initToolbar } from "./toolbar";
 import { attachPointer } from "../input/pointer";
 import { attachLongPress } from "../input/long-press";
 import { attachKeyboard } from "../input/keyboard";
+import { attachGridNav } from "../input/grid-nav";
 
 let state: GameState;
 let puzzle: Puzzle;
@@ -195,6 +196,8 @@ export function initApp(): void {
       else helpDialog.showModal();
     },
   });
+
+  attachGridNav(boardEl, handleFill, handleCross);
 
   initHelp(helpBtn, helpDialog);
   initToolbar(toolbar, {

@@ -77,14 +77,22 @@ export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
   });
   board.appendChild(rowCluesEl);
 
-  // Cells grid
+  // Cells grid — each row wrapped in role="row" (display:contents) so the
+  // CSS grid still lays cells out flat while satisfying ARIA grid semantics.
   const cellsEl = document.createElement("div");
   cellsEl.className = "board-cells";
   cellsEl.style.gridTemplateColumns = `repeat(${puzzle.width}, var(--cell-size))`;
   cellsEl.setAttribute("role", "grid");
   cellsEl.setAttribute("aria-label", "Pixel crossing grid");
+  cellsEl.setAttribute("aria-rowcount", String(puzzle.height));
+  cellsEl.setAttribute("aria-colcount", String(puzzle.width));
 
   for (let y = 0; y < puzzle.height; y++) {
+    const rowEl = document.createElement("div");
+    rowEl.className = "board-row";
+    rowEl.setAttribute("role", "row");
+    rowEl.setAttribute("aria-rowindex", String(y + 1));
+
     for (let x = 0; x < puzzle.width; x++) {
       const cell = document.createElement("div");
       cell.className = "cell";
@@ -92,9 +100,12 @@ export function renderBoard(container: HTMLElement, puzzle: Puzzle): void {
       cell.dataset["y"] = String(y);
       cell.dataset["state"] = "unknown";
       cell.setAttribute("role", "gridcell");
+      cell.setAttribute("aria-colindex", String(x + 1));
       cell.setAttribute("aria-label", `Row ${y + 1} column ${x + 1}, unknown`);
-      cellsEl.appendChild(cell);
+      cell.setAttribute("tabindex", x === 0 && y === 0 ? "0" : "-1");
+      rowEl.appendChild(cell);
     }
+    cellsEl.appendChild(rowEl);
   }
   board.appendChild(cellsEl);
 

@@ -24,6 +24,22 @@ async function solvePuzzle(
 }
 
 test.beforeEach(async ({ page }) => {
+  // Pin the date so getDailyPuzzle always selects index 0 (Tiny Rocket)
+  await page.addInitScript(() => {
+    const fixedMs = new Date("2026-05-25T12:00:00Z").getTime();
+    const OrigDate = window.Date;
+    class MockDate extends OrigDate {
+      constructor(...args: unknown[]) {
+        if (args.length === 0) super(fixedMs);
+        // @ts-expect-error spread into native constructor
+        else super(...args);
+      }
+      static override now() {
+        return fixedMs;
+      }
+    }
+    window.Date = MockDate as unknown as typeof Date;
+  });
   await page.goto(".");
 });
 
