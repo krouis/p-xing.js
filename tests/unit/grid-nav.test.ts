@@ -140,7 +140,9 @@ describe("attachGridNav", () => {
     const onFill = vi.fn();
     attachGridNav(c, onFill, vi.fn());
     const grid = c.querySelector<HTMLElement>('[role="grid"]')!;
-    grid.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+    grid.dispatchEvent(
+      new KeyboardEvent("keydown", { key: " ", bubbles: true }),
+    );
     expect(onFill).not.toHaveBeenCalled();
   });
 
