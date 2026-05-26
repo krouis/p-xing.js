@@ -10,7 +10,7 @@ A minimalist browser-based pixel crossing puzzle game. Open the page, start play
 
 ## Live demo
 
-_Coming soon — deployed at `https://<owner>.github.io/p-xing.js/`_
+**[https://krouis.github.io/p-xing.js/](https://krouis.github.io/p-xing.js/)**
 
 ![p-xing.js puzzle board screenshot](docs/assets/p-xing-screenshot.svg)
 
